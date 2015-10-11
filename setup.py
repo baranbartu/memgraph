@@ -10,5 +10,5 @@ setup(
     author='Baran Bartu Demirci',
     author_email='bbartu.demirci@gmail.com',
     description='memory observation and graph tool for methods',
-    install_requires=['guppy','plotly']
+    install_requires=['guppy', 'plotly', 'mock']
 )

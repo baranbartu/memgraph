@@ -4,8 +4,6 @@ import time
 
 
 class Daemon(object):
-    stop_event = None
-
     def __init__(self, logic):
         self.logic = logic
         self.logs = {}
@@ -13,20 +11,20 @@ class Daemon(object):
         super(Daemon, self).__init__()
 
     def start(self, args):
+        args += (self.stop_event,)
         t = threading.Thread(target=self.run, args=args)
+        t.setDaemon(True)
         t.start()
 
-    def stop(self, generate_csv, make_plot):
+    def stop(self):
         self.stop_event.set()
-        if generate_csv:
-            self.logic.logs_to_csv()
-            if make_plot:
-                self.logic.make_plot()
+        self.logic.logs_to_csv()
+        self.logic.make_plot()
 
     @abc.abstractmethod
     def run(self, *args):
-        wait = args[0]
-        while not self.stop_event.is_set():
+        wait, stop_event = args
+        while not stop_event.is_set():
             self.logic.execute()
             time.sleep(wait)
 
@@ -34,6 +32,7 @@ class Daemon(object):
 class Logic(object):
     def __init__(self):
         self.logs = {}
+        super(Logic, self).__init__()
 
     def execute(self):
         pass
