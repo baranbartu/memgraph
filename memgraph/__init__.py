@@ -36,7 +36,7 @@ class DefaultMemoryLogic(Logic):
         # todo update logs correctly
 
     def logs_to_csv(self):
-        logger.info(self.logs)
+        logger.info('Logs: %s' % (self.logs,))
         # todo convert logs to csv
 
     def make_plot(self):
@@ -44,11 +44,15 @@ class DefaultMemoryLogic(Logic):
         # todo make a plot
 
 
-def observe(f, wait=0.0000000001, generate_csv=True, make_plot=False):
+def observe(f, wait=0.0000000001):
     def wrapper(*args, **kwargs):
         d = Daemon(DefaultMemoryLogic())
         d.start((wait,))
-        f(*args, **kwargs)
-        d.stop(generate_csv, make_plot)
+        start = time.time()
+        result = f(*args, **kwargs)
+        elapsed = time.time() - start
+        logger.info('Execution time of "%s": %f' % (f.__name__, elapsed))
+        d.stop()
+        return result
 
     return wrapper
