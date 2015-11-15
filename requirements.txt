@@ -1,3 +1,4 @@
-guppy
+memory_profiler
+psutil
 plotly
 mock
