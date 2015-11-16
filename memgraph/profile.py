@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 def determine_memory_info(prof, precision=1):
-    logs = {}
+    logs = []
     for code in prof.code_map:
         lines = prof.code_map[code]
         if not lines:
@@ -46,8 +46,9 @@ def determine_memory_info(prof, precision=1):
                 inc = template_mem.format(inc)
                 # todo will be used in the future to make more sensitive
                 values = (line, mem, inc, all_lines[line - 1])
-                logs[line] = mem
-        # todo will be used in the future
-        csv_file = make_csv(logs, ['Line', 'Memory'])
-        make_plot(logs, csv_file.replace('.csv', ''))
-        remove_file(csv_file)
+                logs.append({'x': line, 'y': mem})
+
+    # todo will be used in the future
+    csv_file = make_csv(logs, ['Line', 'Memory'])
+    make_plot(logs, csv_file.replace('.csv', ''))
+    remove_file(csv_file)

@@ -16,9 +16,9 @@ def make_csv(logs, headers):
         fieldnames = headers
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
-        for key in sorted(logs.keys()):
+        for log in sorted(logs, key=lambda l: l['x']):
             writer.writerow(
-                {headers[0]: str(key), headers[1]: str(logs[key])})
+                {headers[0]: str(log['x']), headers[1]: str(log['y'])})
     return csv_file
 
 

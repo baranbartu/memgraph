@@ -1,7 +1,7 @@
 __author__ = 'baranbartu'
 
 import logging
-import plotly
+import plotly.tools as tls
 import plotly.plotly as py
 import plotly.graph_objs as go
 
@@ -9,10 +9,10 @@ logger = logging.getLogger(__name__)
 
 
 def make_plot(logs, file_name):
-    plotly.tools.set_credentials_file(username='memgraph',
+    tls.set_credentials_file(username='memgraph',
                                       api_key='wb1kstdv2f')
-    x = [line for line in sorted(logs.keys())]
-    y = [logs[line] for line in sorted(logs.keys())]
+    x = [line['x'] for line in sorted(logs, key=lambda l: l['x'])]
+    y = [line['y'] for line in sorted(logs, key=lambda l: l['x'])]
     trace = go.Scatter(
         x=x,
         y=y
