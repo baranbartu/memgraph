@@ -19,7 +19,7 @@ after completed execution of method.
 
 # Example Line Chart
 
-![Alt text](https://raw.github.com/baranbartu/memgraph/master/screenshot.png
+![ScreenShot](https://raw.github.com/baranbartu/memgraph/master/screenshot.png)
 
 
 
