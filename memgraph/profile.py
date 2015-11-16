@@ -1,31 +1,16 @@
 __author__ = 'baranbartu'
 
 import os
+import logging
 import inspect
 import linecache
-import logging
-import csv
-import threading
-from memory_profiler import LineProfiler
-from memgraph.utils import generate_file_name
 from memgraph.plot import make_plot
+from memgraph.utils import make_csv, remove_file
 
 logger = logging.getLogger(__name__)
 
 
-def observe(f):
-    def wrapper(*args, **kwargs):
-        prof = LineProfiler()
-        val = prof(f)(*args, **kwargs)
-        logger.info('Please wait... Line graph will be ready in few seconds.')
-        job = threading.Thread(target=make_line_graph, args=(prof,))
-        job.start()
-        return val
-
-    return wrapper
-
-
-def make_line_graph(prof, precision=1):
+def determine_memory_info(prof, precision=1):
     logs = {}
     for code in prof.code_map:
         lines = prof.code_map[code]
@@ -61,19 +46,8 @@ def make_line_graph(prof, precision=1):
                 inc = template_mem.format(inc)
                 # todo will be used in the future to make more sensitive
                 values = (line, mem, inc, all_lines[line - 1])
-                logs[line] = inc
+                logs[line] = mem
         # todo will be used in the future
-        csv_file = make_csv(logs)
+        csv_file = make_csv(logs, ['Line', 'Memory'])
         make_plot(logs, csv_file.replace('.csv', ''))
-        # todo remove csv file
-
-
-def make_csv(logs):
-    csv_file = '%s.csv' % generate_file_name()
-    with open(csv_file, 'w') as csvfile:
-        fieldnames = ['Line', 'Increase']
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        writer.writeheader()
-        for line in sorted(logs.keys()):
-            writer.writerow({'Line': str(line), 'Increase': str(logs[line])})
-    return csv_file
+        remove_file(csv_file)
